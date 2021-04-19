@@ -1,0 +1,22 @@
+sudo: required
+services:
+  - docker
+
+before_install:
+  - docker build -t dvelez/complex-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run -e CI=true USERNAME/react-test npm test
+
+after_success:
+  - docker build -t dvelez/complex-multi-client ./client
+  - docker build -t dvelez/complex-nginx ./nginx
+  - docker build -t dvelez/complex-server ./server
+  - docker build -t dvelez/complex-worker ./worker
+  # Log in to the docker CLI
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  # Take those images and push them to docker hub
+  - docker push dvelez/complex-multi-client
+  - docker push dvelez/complex-nginx
+  - docker push dvelez/complex-server
+  - docker push dvelez/complex-worker
