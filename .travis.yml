@@ -10,6 +10,19 @@ before_install:
 script:
   - docker run -e CI=true dariovelez/complex-test npm test
 
+after_success:
+  - docker build -t dariovelez/complex-client ./client
+  - docker build -t dariovelez/complex-nginx ./nginx
+  - docker build -t dariovelez/complex-server ./server
+  - docker build -t dariovelez/complex-worker ./worker
+  # Log in to the docker CLI
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  # Take those images and push them to docker hub 
+  - docker push dariovelez/complex-client
+  - docker push dariovelez/complex-nginx
+  - docker push dariovelez/complex-server
+  - docker push dariovelez/complex-worker
+
 deploy:
   provider: elasticbeanstalk
   region: "us-east-1"
@@ -21,16 +34,3 @@ deploy:
     branch: main
   access_key_id: $AWS_ACCESS_KEY
   secret_access_key: $AWS_SECRET_KEY
-
-after_success:
-  - docker build -t dariovelez/complex-client ./client
-  - docker build -t dariovelez/complex-nginx ./nginx
-  - docker build -t dariovelez/complex-server ./server
-  - docker build -t dariovelez/complex-worker ./worker
-  # Log in to the docker CLI
-  - docker login -u "$DOCKER_ID" -p "$DOCKER_PASSWORD" docker.io
-  # Take those images and push them to docker hub 
-  - docker push dariovelez/complex-client
-  - docker push dariovelez/complex-nginx
-  - docker push dariovelez/complex-server
-  - docker push dariovelez/complex-worker
