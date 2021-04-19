@@ -1,0 +1,2 @@
+# to test a container after building from Dockerfile
+docker run -it IMAGE_ID
