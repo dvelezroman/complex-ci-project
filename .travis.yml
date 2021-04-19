@@ -5,20 +5,20 @@ services:
   - docker
 
 before_install:
-  - docker build -t dvelez/complex-test -f ./client/Dockerfile.dev ./client
+  - docker build -t dariovelez/complex-test -f ./client/Dockerfile.dev ./client
 
 script:
-  - docker run -e CI=true dvelez/complex-test npm test
+  - docker run -e CI=true dariovelez/complex-test npm test
 
 after_success:
-  - docker build -t dvelez/multi-client ./client
-  - docker build -t dvelez/multi-nginx ./nginx
-  - docker build -t dvelez/multi-server ./server
-  - docker build -t dvelez/multi-worker ./worker
+  - docker build -t dariovelez/complex-client ./client
+  - docker build -t dariovelez/complex-nginx ./nginx
+  - docker build -t dariovelez/complex-server ./server
+  - docker build -t dariovelez/complex-worker ./worker
   # Log in to the docker CLI
   - docker login -u "$DOCKER_ID" -p "$DOCKER_PASSWORD" docker.io
   # Take those images and push them to docker hub 
-  - docker push dvelez/multi-client
-  - docker push dvelez/multi-nginx
-  - docker push dvelez/multi-server
-  - docker push dvelez/multi-worker
+  - docker push dariovelez/complex-client
+  - docker push dariovelez/complex-nginx
+  - docker push dariovelez/complex-server
+  - docker push dariovelez/complex-worker
